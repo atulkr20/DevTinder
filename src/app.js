@@ -2,6 +2,12 @@ const express = require('express')
 
 const app = express();
 
+app.get("/user/:userId/:name/:password", (req, res) => {
+    console.log(req.params)
+    res.send({firstName: "Atul", lastName: "jha"})
+})
+
+
 app.use((req, res) =>  // This is a Request Handler
     res.send('Hello i am your sever and i am working totally fine')
 )

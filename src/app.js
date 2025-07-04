@@ -2,53 +2,38 @@ const express = require('express')
 
 const app = express();
 
-app.get(
-    "/user",
-    (req, res, next) => {
-        console.log("This is running successfully on 1")
-        next();
-        res.send("1st response!!")
-    }
-)
+const {adminAuth, userAuth} = require ("./middlewares/auth")
 
-app.get (
-    "/user", 
-    (req, res, next) => {
-        console.log("Server is successfully running on 2 ")
-        next();
-       // res.send("2nd response!!")
-    }
-)
+app.use("/admin",  adminAuth);
 
-app.get (
-    "/user", 
-    (req, res, next) => {
-        console.log("Server is successfully running on 3 ")
-        next();
-       // res.send("3rd response!!")
-    }
-)
+app.get("/admin", (req, res) => {
+    res.send("This is admin page ")
 
-app.get(
-    "/user",
-    (req, res, next) => {
-        console.log("Server is successfully running on 4")
-            next();
-           // res.send("4th response!!")
-        }
-    
-)
+})
 
-app.get(
-    "/user",
-    (req, res, next) => {
-        console.log("Server is successfully running on 5")
-        res.send("5th response")
-    }
-)
+app.post("/user/login", (req, res,) =>{
+    res.send("User is logged in Successfully")
+})
 
+
+app.get("/user", (req, res) => {
+    res.send("This is user data")
+
+})
+app.get("/user/data", userAuth, (req, res) =>{
+    res.send("User data sent")
+
+})
+
+app.get("/admin/getAllData", (req, res)=> {
+    res.send("All data sent")
+})
+
+app.get("/admin/deleteUser", (req, res) => {
+    res.send("Uesr deleted Successfully")
+})
 
 
 app.listen(3000, () => {
-console.log('Sever is successfully running on server 30000')
+console.log('Sever is successfully running on server 3000')
 }); 

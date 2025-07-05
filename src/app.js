@@ -1,30 +1,28 @@
-const express = require('express')
-
+const express = require('express');
+const connectDB = require('./config/database'); 
+const User = require("./models/user");
 const app = express();
+// Creating a signup API
+app.post("/signup", async (req, res) => {
+    const user = new User ({
+        firstName: "Atul",
+        lastName: "Jha",
+        emailId: "Atul@jha.com",
+        password: "Atul@123"
+    });
+    await user.save();
+    res.send("User Added Successfully")
 
-app.use("/", (err, req, res, next)=> {
-    res.send("Something went wrong")
-})
-
-app.get("/user/data", (req, res) => {
-try {
-    throw new error("abcsde")
-    res.send("User Data Sent")
-}
-catch (err) {
-    res.status(500).send("Something went wrong")
-}
 });
-app.get("/user", (req, res) => {
-    res.send("This is user data")
 
-})
+connectDB()
+  .then(() => {
+    console.log("Database connection established....");
 
-app.use("/", (err, req, res, next)=>{
-    res.status(500).send("Something went wrong")
-})
-
-
-app.listen(3000, () => {
-console.log('Sever is successfully running on server 3000')
-}); 
+    app.listen(3000, () => {
+      console.log("Server is successfully running on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.error("Database cannot be connected!!", err);
+  });

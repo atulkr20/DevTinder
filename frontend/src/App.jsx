@@ -21,7 +21,7 @@ function App() {
     
     <Footer />
     </BrowserRouter>
-<h1 className="text-3xl font-bold text-blue-500">Hello DevTinder!</h1>
+<h1 className="text-3xl font-bold text-blue-500"></h1>
     </>
   );
 }

@@ -2,8 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 
 const Login = () => {
-  const [emailId, setEmailId] = useState("");
-  const [password, setPassword] = useState("");
+  const [emailId, setEmailId] = useState("steve@gmail.com");
+  const [password, setPassword] = useState("Steve@123");
 
 
   const handleLogin = async () => {

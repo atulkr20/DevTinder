@@ -4,15 +4,16 @@ import Login from "./Login";
 import Profile from "./Profile";
 import NavBar from "./NavBar"; 
 import Footer from "./Footer";
+import { Provider } from "react-redux"; 
+import appStore from "./utils/appStore";
 
 
 function App() {
   return (
     <>
-
+    <Provider store = {appStore}>
     <BrowserRouter basename = "/">
           <NavBar />
-
     <Routes>
       <Route path="/" element={<Body />} />
       <Route path="/Login" element={<Login />} />
@@ -21,7 +22,7 @@ function App() {
     
     <Footer />
     </BrowserRouter>
-<h1 className="text-3xl font-bold text-blue-500"></h1>
+    </Provider>
     </>
   );
 }

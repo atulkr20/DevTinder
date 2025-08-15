@@ -4,6 +4,7 @@ import Footer from "./Footer";
 const Body = () => {
     return (
         <div>
+            <h2> Welcome to feed</h2>
             <Footer />
         
         </div>

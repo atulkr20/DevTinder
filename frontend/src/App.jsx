@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Body from "./componenets/Body";
-import Login from "./componenets/Login";
-import Profile from "./componenets/Profile";
-import NavBar from "./componenets/NavBar"; 
-import Footer from "./componenets/Footer";
+import Body from "./components/Body";
+import Login from "./components/Login";
+import Profile from "./components/Profile";
+import NavBar from "./components/NavBar"; 
+import Footer from "./components/Footer";
 import { Provider } from "react-redux"; 
 import appStore from "./utils/appStore";
 

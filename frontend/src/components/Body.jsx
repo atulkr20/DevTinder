@@ -6,6 +6,7 @@ import { BASE_URL } from "../utils/constants"
 import { useDispatch, useSelector } from "react-redux";
 import { addUser} from "../utils/userSlice";
 import { useEffect } from "react";
+import Feed from "./Feed";
 
 const Body = () => {
     const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const Body = () => {
         const user = await axios.get(BASE_URL + "/profile/view" , {
             withCredentials: true,
         });
-        dispatch(addUser(res.data));
+        dispatch(addUser(user.data));
 
     } catch (err) {
         if(err.status === 401){
@@ -35,7 +36,7 @@ const Body = () => {
     }, []);
     return (
         <div>
-            <h2> Welcome to feed</h2>
+            <Feed />
             <Footer />
         
         </div>

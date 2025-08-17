@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import UserCard from "./UserCard";
@@ -16,6 +16,18 @@ const EditProfile = ({ user }) => {
   const [about, setAbout] = useState(user?.about || "");
   const [photoUrl, setPhotoUrl] = useState(user?.photoUrl || "");
   const [error, setError] = useState("");
+
+  // ✅ Sync local state with latest user data
+  useEffect(() => {
+    if (user) {
+      setFirstName(user.firstName || "");
+      setLastName(user.lastName || "");
+      setAge(user.age || "");
+      setGender(user.gender || "");
+      setAbout(user.about || "");
+      setPhotoUrl(user.photoUrl || "");
+    }
+  }, [user]);
 
   const saveProfile = async () => {
     if (!firstName || !lastName) {
@@ -35,8 +47,20 @@ const EditProfile = ({ user }) => {
       // Update Redux store
       dispatch(addUser(res?.data?.data));
 
-      // Show confirmation
-      alert("Profile details saved successfully!");
+      // ✅ Toast instead of alert
+      const toast = document.createElement("div");
+      toast.className =
+        "toast toast-top toast-center transition-opacity duration-500";
+      toast.innerHTML = `
+        <div class="alert alert-success">
+          <span>Profile updated successfully!</span>
+        </div>
+      `;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 3000);
     } catch (err) {
       setError(err.message || "Failed to save profile");
     }

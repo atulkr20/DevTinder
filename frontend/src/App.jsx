@@ -6,6 +6,7 @@ import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import { Provider } from "react-redux"; 
 import appStore from "./utils/appStore";
+import Connections from "./components/Connections";
 
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
       <Route path="/" element={<Body />} />
       <Route path="/Login" element={<Login />} />
       <Route path="/Profile" element={<Profile />} />
+      <Route path="/connections" element={<Connections />} />
+      <Route path = "/requests" element={<Request />} />
     </Routes>
     
     <Footer />

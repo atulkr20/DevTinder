@@ -30,7 +30,9 @@ const Requests = () => {
         {},
         { withCredentials: true }
       );
-      fetchRequests(); // Refresh after action
+
+      // ✅ Instantly update frontend by removing the reviewed request
+      setRequests((prev) => prev.filter((req) => req._id !== requestId));
     } catch (err) {
       console.error("Error reviewing request:", err);
     }

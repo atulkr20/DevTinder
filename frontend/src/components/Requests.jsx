@@ -31,7 +31,6 @@ const Requests = () => {
         { withCredentials: true }
       );
 
-      // ✅ Instantly update frontend by removing the reviewed request
       setRequests((prev) => prev.filter((req) => req._id !== requestId));
     } catch (err) {
       console.error("Error reviewing request:", err);

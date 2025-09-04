@@ -25,6 +25,9 @@ console.log("addFeed type:", typeof addFeed);
     useEffect(() => {
         getFeed();
     }, [] );
+    if(!feed) return;
+
+    if(feed.length<= 0) return <h1>No New User Found</h1>
     return (
   feed && feed.length > 0 ? (
     <div className="flex justify-center my-10">

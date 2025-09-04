@@ -163,6 +163,7 @@ const EditProfile = ({ user }) => {
       <div className="card bg-base-100 w-80 shadow-sm p-4">
         <UserCard
           user={{ firstName, lastName, age, gender, about, photoUrl }}
+          isPreview ={true}
         />
       </div>
     </div>

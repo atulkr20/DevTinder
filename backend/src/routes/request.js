@@ -50,7 +50,7 @@ requestRouter.post("/request/send/:status/:toUserId", userAuth, async (req, res)
   }
 });
 
-// ✅ Review Request (accept/reject)
+// Review Request (accept/reject)
 requestRouter.post("/request/review/:status/:requestId", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;

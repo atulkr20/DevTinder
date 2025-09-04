@@ -2,34 +2,29 @@ import { useState } from "react";
 import axios from "axios";
 import { addUser } from "../utils/userSlice";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constants";
- 
 
 const Login = () => {
   const [emailId, setEmailId] = useState("steve@gmail.com");
   const [password, setPassword] = useState("Steve@123");
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-
 
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-       BASE_URL + "/login", 
-       {
-        emailId,
-        password,
-      }, {withCredentials: true});
+        BASE_URL + "/login",
+        { emailId, password },
+        { withCredentials: true }
+      );
 
-    dispatch(addUser(res.data));
-    navigate("/");
-
-  } catch (err) {
-    setError(err.message)
-      console.error(err?.response?.message || "Something Went Wrong");
+      dispatch(addUser(res.data));
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Something Went Wrong");
+      console.error(err);
     }
   };
 
@@ -63,17 +58,23 @@ const Login = () => {
             />
           </fieldset>
 
-          {/* Login Button */}
-          <p className = "text-red-500"> {error}</p>
+          {/* Error Message */}
+          {error && <p className="text-red-500">{error}</p>}
 
+          {/* Login Button */}
           <div className="card-actions justify-center my-2">
-            <button
-              onClick={handleLogin}
-              className="btn btn-primary w-full"
-            >
+            <button onClick={handleLogin} className="btn btn-primary w-full">
               Login
             </button>
           </div>
+
+          {/* Signup Link */}
+          <p className="text-center mt-2">
+            Don’t have an account?{" "}
+            <Link to="/signup" className="text-blue-500 hover:underline">
+              Signup here
+            </Link>
+          </p>
         </div>
       </div>
     </div>

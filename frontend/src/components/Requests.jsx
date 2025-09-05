@@ -37,44 +37,73 @@ const Requests = () => {
     }
   };
 
-  if (loading) return <h2>Loading...</h2>;
+  if (loading) return <h2 className="text-center mt-10">Loading...</h2>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">Received Requests</h2>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold text-center mb-8">
+        Received Requests
+      </h2>
+
       {requests.length === 0 ? (
-        <p>No pending requests.</p>
+        <p className="text-center text-gray-500">No pending requests.</p>
       ) : (
-        requests.map((req) => (
-          <div
-            key={req._id}
-            className="border p-4 mb-3 rounded-lg shadow-sm flex justify-between items-center"
-          >
-            <div>
-              <h3 className="font-semibold">
-                {req.fromUserId.firstName} {req.fromUserId.lastName}
-              </h3>
-              <p>{req.fromUserId.about}</p>
-              <p className="text-sm text-gray-600">
-                {req.fromUserId.age} yrs, {req.fromUserId.gender}
-              </p>
-            </div>
-            <div>
-              <button
-                onClick={() => handleReview(req._id, "accepted")}
-                className="bg-green-500 text-white px-3 py-1 rounded mr-2"
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {requests.map((req) => {
+            const { firstName, lastName, age, gender, about, photoUrl } =
+              req.fromUserId;
+
+            return (
+              <div
+                key={req._id}
+                className="bg-white dark:bg-base-200 p-5 rounded-xl shadow-md hover:shadow-xl transition hover:scale-[1.02]"
               >
-                Accept
-              </button>
-              <button
-                onClick={() => handleReview(req._id, "rejected")}
-                className="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Reject
-              </button>
-            </div>
-          </div>
-        ))
+                {/* User Info */}
+                <div className="flex items-center space-x-4">
+                  <img
+                    alt={firstName + " " + lastName}
+                    className="w-14 h-14 rounded-full object-cover border"
+                    src={
+                      photoUrl ||
+                      `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
+                    }
+                  />
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {firstName} {lastName}
+                    </h3>
+                    {age && gender && (
+                      <p className="text-sm text-gray-500">
+                        {age} yrs · {gender}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* About */}
+                <p className="mt-3 text-sm text-gray-600 line-clamp-3">
+                  {about || "No bio available"}
+                </p>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-3 mt-4">
+                  <button
+                    onClick={() => handleReview(req._id, "accepted")}
+                    className="px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white transition"
+                  >
+                    ✅ Accept
+                  </button>
+                  <button
+                    onClick={() => handleReview(req._id, "rejected")}
+                    className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition"
+                  >
+                    ❌ Reject
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );

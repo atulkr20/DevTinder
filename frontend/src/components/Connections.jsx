@@ -42,20 +42,30 @@ const Connections = () => {
           return (
             <div
               key={connection._id || firstName + lastName}
-              className="m-4 p-4 rounded-lg bg-base-200 shadow-md w-60 text-center"
+              className="m-4 p-4 rounded-lg bg-base-200 shadow-md w-60 text-center hover:shadow-lg transition"
             >
+              {/* Profile Image with Fallback */}
               <img
-                alt="photo"
-                className="w-20 h-20 rounded-full mx-auto mb-3"
-                src={photoUrl}
+                alt={firstName + " " + lastName}
+                className="w-20 h-20 rounded-full mx-auto mb-3 object-cover"
+                src={
+                  photoUrl ||
+                  `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random`
+                }
               />
+
+              {/* Name */}
               <h2 className="font-bold text-xl">
                 {firstName + " " + lastName}
               </h2>
+
+              {/* Age & Gender */}
               {age && gender && (
                 <p className="text-sm text-gray-600">{age + ", " + gender}</p>
               )}
-              <p className="mt-2 text-gray-700">{about}</p>
+
+              {/* About Section */}
+              <p className="mt-2 text-gray-700">{about || "No bio available"}</p>
             </div>
           );
         })}

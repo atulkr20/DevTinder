@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { createSocketConnection } from "../utils/socket";
+import axios from "axios";
+import { BASE_URL, createSocketConnection } from "../utils/socket";
 
 const Chat = () => {
   const { id: targetUserId } = useParams();
@@ -11,26 +12,60 @@ const Chat = () => {
   const userId = user?._id;
   const socketRef = useRef(null);
 
+  // Fetch messages from backend once
+  const fetchChatMessages = async () => {
+    if (!userId) return;
+
+    try {
+      const response = await axios.get(`${BASE_URL}/chat/${targetUserId}`, {
+        withCredentials: true,
+      });
+
+      const chatMessages = response.data.messages.map((msg) => ({
+        firstName: msg.senderId.firstName,
+        userId: msg.senderId._id,
+        text: msg.text,
+      }));
+
+      setMessages(chatMessages);
+    } catch (err) {
+      console.error("Failed to fetch messages:", err);
+    }
+  };
+
   useEffect(() => {
-    if (!userId || !targetUserId) return;
+    fetchChatMessages();
+  }, [userId, targetUserId]);
+
+  // Initialize socket connection
+  useEffect(() => {
+    if (!user || !userId || !targetUserId) return;
 
     const socket = createSocketConnection();
     socketRef.current = socket;
 
+    // Join room
     socket.emit("joinChat", {
       firstName: user.firstName,
       userId,
       targetUserId,
     });
 
+    // Listen for incoming messages
     socket.on("messageReceived", (message) => {
-      setMessages((prev) => [...prev, message]);
+      // Avoid duplicates by checking last message
+      setMessages((prev) => {
+        if (prev.length && prev[prev.length - 1].text === message.text) {
+          return prev;
+        }
+        return [...prev, message];
+      });
     });
 
     return () => {
       socket.disconnect();
     };
-  }, [userId, targetUserId, user?.firstName]);
+  }, [user, userId, targetUserId]);
 
   const sendMessage = () => {
     if (!socketRef.current || !newMessage.trim()) return;
@@ -47,15 +82,15 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 shadow-lg rounded-2xl p-6 w-full max-w-2xl">
-        {/* Chat title */}
-        <h1 className="text-2xl font-bold mb-4">Chat</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-4">
+      <div className="bg-gray-800 shadow-lg rounded-2xl p-6 w-full max-w-3xl flex flex-col">
+        {/* Chat header */}
+        <h1 className="text-2xl font-bold mb-4 text-center">Chat</h1>
 
-        {/* messages container */}
-        <div className="border border-gray-700 rounded-2xl p-4 h-96 overflow-y-auto mb-4 bg-gray-700">
+        {/* Messages container */}
+        <div className="flex-1 border border-gray-700 rounded-2xl p-4 overflow-y-auto mb-4 bg-gray-700">
           {messages.length === 0 ? (
-            <p className="text-gray-400 text-center">No messages yet...</p>
+            <p className="text-gray-400 text-center mt-2">No messages yet...</p>
           ) : (
             messages.map((msg, idx) => (
               <div
@@ -73,13 +108,15 @@ const Chat = () => {
           )}
         </div>
 
-        {/* input + send */}
-        <div className="flex">
+        {/* Input + Send */}
+        <div className="flex mt-auto">
           <input
+            type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="flex-1 bg-gray-900 border border-gray-600 rounded-full p-3 text-white placeholder-gray-400"
+            className="flex-1 bg-gray-900 border border-gray-600 rounded-full p-3 text-white placeholder-gray-400 focus:outline-none"
             placeholder="Type a message..."
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           />
           <button
             onClick={sendMessage}

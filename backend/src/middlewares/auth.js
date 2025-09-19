@@ -1,29 +1,27 @@
-const jwt = require("jsonwebtoken")
-const User = require("../models/user")
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+require("dotenv").config();
 
 const userAuth = async (req, res, next) => {
-     //  Read the token from the req cookies
-     try {
-    const {token} = req.cookies; 
-    if(!token){
-        return res.status(401).send("Please Login");
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      return res.status(401).send("Please Login");
     }
-    const decodeObj = await jwt.verify(token, "DEV@Tinder$790");
 
-    const {_id} = decodeObj;
+    const decodeObj = await jwt.verify(token, process.env.JWT_SECRET);
 
+    const { _id } = decodeObj;
     const user = await User.findById(_id);
-    if(!user) {
-        throw new Error("User not found");
+    if (!user) {
+      throw new Error("User not found");
     }
-
 
     req.user = user;
     next();
-} catch (err) {
+  } catch (err) {
     res.status(400).send("ERROR: " + err.message);
-}
+  }
 };
-module.exports ={
-    userAuth,
-};
+
+module.exports = { userAuth };

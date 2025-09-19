@@ -1,9 +1,19 @@
+// db.js
 const mongoose = require("mongoose");
+require("dotenv").config(); 
 
 const connectDB = async () => {
-  await mongoose.connect(
-    "mongodb+srv://atulkrjha59:Atul%40mongodb@namastenodejs.zedzwv2.mongodb.net/devTinder"
-  );
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    console.log("Database connected successfully!");
+  } catch (err) {
+    console.error("Database connection failed!", err.message);
+    process.exit(1); 
+  }
 };
 
 module.exports = connectDB;

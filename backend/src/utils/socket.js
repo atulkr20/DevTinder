@@ -1,14 +1,14 @@
+// utils/socket.js
 const { Server } = require("socket.io");
 const crypto = require("crypto");
+const mongoose = require("mongoose");
 const { Chat } = require("../models/chat");
 
 const getSecretRoomId = (userId, targetUserId) => {
-    return crypto
+  return crypto
     .createHash("sha256")
-    .update([userId, targetUserId]
-    .sort().join("_"))
+    .update([userId, targetUserId].sort().join("_"))
     .digest("hex");
-
 };
 
 const initializeSocket = (server) => {
@@ -29,35 +29,42 @@ const initializeSocket = (server) => {
       socket.join(roomId);
     });
 
-    socket.on("sendMessage",  async ({ firstName, userId, targetUserId, text }) => {
+    socket.on("sendMessage", async ({ firstName, userId, targetUserId, text }) => {
+      if (!text.trim()) return;
+
       const roomId = getSecretRoomId(userId, targetUserId);
       console.log(`💬 ${firstName}: ${text}`);
 
-      // Save Messages to the database
-    try {
-        let chat = await Chat.findOne ({
-            participants: { $all: [userId, targetUserId,] },
+      try {
+        // Find or create chat
+        let chat = await Chat.findOne({
+          participants: { $all: [mongoose.Types.ObjectId(userId), mongoose.Types.ObjectId(targetUserId)] },
         });
 
-        if(!chat) {
-            chat = new Chat({
-                participants: [userId, targetUserId],
-                messages: [],
-            });
+        if (!chat) {
+          chat = new Chat({
+            participants: [userId, targetUserId],
+            messages: [],
+          });
         }
 
+        // Save message
         chat.messages.push({
-            senderId: userId,
-            text,
+          senderId: mongoose.Types.ObjectId(userId),
+          text,
         });
-
         await chat.save();
 
-    }catch(err){
-        console.log(err);
-    }
+        // Emit message to room
+        io.to(roomId).emit("messageReceived", {
+          firstName,
+          userId,
+          text,
+        });
 
-      io.to(roomId).emit("messageReceived", { firstName, userId, text });
+      } catch (err) {
+        console.error("Error saving message:", err);
+      }
     });
 
     socket.on("disconnect", () => {

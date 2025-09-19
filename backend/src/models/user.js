@@ -20,18 +20,17 @@ const userSchema = new mongoose.Schema ({
         trim: true,
         validate (value){
             if(!validator.isEmail(value)){
-            throw new Error ("Email is not valid" + value);
+                throw new Error ("Email is not valid " + value);
+            }
         }
-        }
-       
     },
     password: {
         type: String,
         required: true,
         validate (value){
             if(!validator.isStrongPassword(value)){
-            throw new Error ("Password is not strong" + value);
-        }
+                throw new Error ("Password is not strong " + value);
+            }
         }
     },
     age: {
@@ -42,22 +41,16 @@ const userSchema = new mongoose.Schema ({
         type: String,
         enum: {
             values: ["male", "female", "other"],
-            message: '{VALUE} is not a vlid gender type',
+            message: '{VALUE} is not a valid gender type',
         },
-        // validate:(value) =>{
-        //     if(!["male", "female", "other"].includes(value)){
-        //         throw new Error ("Gender data is not valid")
-        //     }
-        // };
-
     },
     photoUrl: {
         type: String,
         default: "https://svgsilh.com/image/659651.html",
         validate (value){
             if(!validator.isURL(value)){
-            throw new Error ("Photo Url is not valid" + value);
-        }
+                throw new Error ("Photo Url is not valid " + value);
+            }
         }
     },
     about: {
@@ -69,30 +62,35 @@ const userSchema = new mongoose.Schema ({
     },
     createdAt:{
         type: Date,
+    },
+
+    // 🔹 New fields for online status
+    isOnline: {
+        type: Boolean,
+        default: false,
+    },
+    lastSeen: {
+        type: Date,
+        default: null,
     }
-},
- {
-    timestamps: true,
-});
+
+}, { timestamps: true });
 
 
+// JWT token method
 userSchema.methods.getJWT = async function () {
     const user = this;
-
-    const token = await jwt.sign ({ _id: user._id}, "DEV@Tinder$790", {
+    const token = await jwt.sign({ _id: user._id }, "DEV@Tinder$790", {
         expiresIn: "7d",
     });
-
     return token;
 }; 
 
+// Password validation method
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
     const user = this;
-    const isPasswordValid = await bcrypt.compare(
-        passwordInputByUser, 
-    user.password);
+    const isPasswordValid = await bcrypt.compare(passwordInputByUser, user.password);
     return isPasswordValid;
 };
-module.exports = mongoose.model("User", userSchema)
 
- 
+module.exports = mongoose.model("User", userSchema)
